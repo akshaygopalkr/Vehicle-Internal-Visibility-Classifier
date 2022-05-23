@@ -27,7 +27,7 @@ def add_data(img_folder, train_data):
 
         path = img_folder + image_list[image_idx]
         img = cv2.imread(path)
-        img = cv2.resize(img, (500, 500))
+        # img = cv2.resize(img, (500, 500))
         cv2.imshow('Image', img)
         user_in = chr(cv2.waitKey(0))
 

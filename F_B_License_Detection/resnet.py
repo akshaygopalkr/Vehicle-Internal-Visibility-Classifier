@@ -7,8 +7,8 @@ import pdb
 class ResBlock(nn.Module):
     def __init__(self, in_channels, out_channels, downsample):
         super().__init__()
-        # resblock with a stride of 2
 
+        # resblock with a stride of 2
         if downsample:
 
             self.conv1 = nn.Conv2d(in_channels, out_channels, kernel_size=3, stride=2, padding=1)
@@ -78,7 +78,8 @@ class ResNet18(nn.Module):
 
         self.gap = torch.nn.AdaptiveAvgPool2d(1)
         self.fc1 = torch.nn.Linear(512, 100)
-        self.fc2 = torch.nn.Linear(100, 1)
+        self.fc2 = torch.nn.Linear(100, 50)
+        self.fc3 = torch.nn.Linear(50, 1)
         self.sigmoid = torch.nn.Sigmoid()
 
     def forward(self, input):
@@ -94,6 +95,7 @@ class ResNet18(nn.Module):
         input = torch.reshape(input, (input.size()[0], input.size()[2], input.size()[1]))
         input = self.fc1(input)
         input = self.fc2(input)
+        input = self.fc3(input)
         input = self.sigmoid(input)
 
         return input

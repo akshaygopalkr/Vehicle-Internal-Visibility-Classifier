@@ -165,7 +165,7 @@ if __name__ == '__main__':
         model = model.cuda()
 
     criterion = nn.BCELoss()
-    optimizer = optim.AdamW(model.parameters())
+    optimizer = optim.AdamW(model.parameters(), lr=0.0005)
 
     # Send to train method
     train(criterion=criterion, optimizer=optimizer, train_loader=train_loader, valid_loader=valid_loader, model=model)
