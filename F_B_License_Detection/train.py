@@ -15,7 +15,7 @@ def save_model():
 
 def train(criterion, optimizer, train_loader, valid_loader, model):
 
-    epochs = 15
+    epochs = 50
     best_valid_accuracy = 0.0
 
     for e in range(epochs):
@@ -24,7 +24,7 @@ def train(criterion, optimizer, train_loader, valid_loader, model):
         train_loss = 0.0
         model.train()
         running_train_accuracy = 0.0
-        num_images = 0
+        num_train_images = 0
 
         for batch, (image, labels) in enumerate(train_loader):
 
@@ -34,7 +34,7 @@ def train(criterion, optimizer, train_loader, valid_loader, model):
 
             image = image.float()
             labels = labels.float()
-            num_images += image.size()[0]
+            num_train_images += image.size()[0]
 
             # Clear gradients
             optimizer.zero_grad()
@@ -60,7 +60,7 @@ def train(criterion, optimizer, train_loader, valid_loader, model):
             running_train_accuracy += (train_predictions == labels).float().sum()
             train_loss += loss.item()
 
-        train_accuracy = 100 * running_train_accuracy / num_images
+        train_accuracy = 100 * running_train_accuracy / num_train_images
         num_images = 0
 
         with torch.no_grad():
@@ -96,7 +96,7 @@ def train(criterion, optimizer, train_loader, valid_loader, model):
             best_valid_accuracy = valid_accuracy
 
         print(
-            f'Epoch {e + 1} \t\t Training Loss: {train_loss / len(train_loader)} \t\t Validation Loss: {valid_loss / len(valid_loader)}')
+            f'Epoch {e + 1} \t\t Training Loss: {train_loss / num_train_images} \t\t Validation Loss: {valid_loss / num_images}')
         print('Training Accuracy = {}'.format(train_accuracy))
         print('Validation Accuracy = {}'.format(valid_accuracy))
         print('\n')
