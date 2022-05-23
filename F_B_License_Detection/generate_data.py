@@ -26,7 +26,6 @@ def add_data(img_folder, train_data):
             continue
 
         path = img_folder + image_list[image_idx]
-
         img = cv2.imread(path)
         img = cv2.resize(img, (500, 500))
         cv2.imshow('Image', img)
@@ -43,7 +42,7 @@ def add_data(img_folder, train_data):
             pass
 
         # Use user input to make label
-        label = -1 if user_in == '0' else 1
+        label = 0 if user_in == '0' else 1
         new_train_data['Image'].append(image_list[image_idx])
         new_train_data['Label'].append(label)
         image_idx += 1

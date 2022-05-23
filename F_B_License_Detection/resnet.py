@@ -1,13 +1,16 @@
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
+import pdb
 
 
 class ResBlock(nn.Module):
     def __init__(self, in_channels, out_channels, downsample):
         super().__init__()
         # resblock with a stride of 2
+
         if downsample:
+
             self.conv1 = nn.Conv2d(in_channels, out_channels, kernel_size=3, stride=2, padding=1)
             self.shortcut = nn.Sequential(
                 nn.Conv2d(in_channels, out_channels, kernel_size=1, stride=2),
@@ -19,21 +22,27 @@ class ResBlock(nn.Module):
             # Since we are just taking the input in the Sequential layer can be empty
             self.shortcut = nn.Sequential()
 
-        self.conv2 = nn.Conv2d(in_channels, out_channels, kernel_size=3, stride=1, padding=1)
+        self.conv2 = nn.Conv2d(out_channels, out_channels, kernel_size=3, stride=1, padding=1)
         self.bn1 = nn.BatchNorm2d(out_channels)
         self.bn2 = nn.BatchNorm2d(out_channels)
 
     def forward(self, input):
 
+        # pdb.set_trace()
+
         # Apply shortcut to input to use for
         shortcut = self.shortcut(input)
 
         # convolution for 1st and 2nd layer
-        input = nn.ReLU()(self.bn1(self.conv1(input)))
-        input = nn.ReLU()(self.bn2(self.conv2(input)))
+        input = self.conv1(input)
+        input = self.bn1(input)
+        input = nn.ReLU()(input)
+        input = self.conv2(input)
+        input = self.bn2(input)
+        input = nn.ReLU()(input)
 
         # perform shortcut for last layer
-        return nn.ReLU(input + shortcut)
+        return nn.ReLU()(input + shortcut)
 
 
 class ResNet18(nn.Module):
@@ -68,17 +77,24 @@ class ResNet18(nn.Module):
         )
 
         self.gap = torch.nn.AdaptiveAvgPool2d(1)
-        self.fc = torch.nn.Linear(512, outputs)
+        self.fc1 = torch.nn.Linear(512, 100)
+        self.fc2 = torch.nn.Linear(100, 1)
+        self.sigmoid = torch.nn.Sigmoid()
 
     def forward(self, input):
+
+        # pdb.set_trace()
+
         input = self.layer0(input)
         input = self.layer1(input)
         input = self.layer2(input)
         input = self.layer3(input)
         input = self.layer4(input)
         input = self.gap(input)
-        input = torch.flatten(input)
-        input = self.fc(input)
+        input = torch.reshape(input, (input.size()[0], input.size()[2], input.size()[1]))
+        input = self.fc1(input)
+        input = self.fc2(input)
+        input = self.sigmoid(input)
 
         return input
 
