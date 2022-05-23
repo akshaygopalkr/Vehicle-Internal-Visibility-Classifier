@@ -16,7 +16,9 @@ class CarImageDataset(Dataset):
         return len(self.data_file)
 
     def __getitem__(self, idx):
-        img_path = self.img_dir + '\\' + self.data_file.iloc[idx, 0]
+
+        # TODO: Different for my PC
+        img_path = self.img_dir + '/' + self.data_file.iloc[idx, 0]
         image = cv2.imread(img_path)
         image = torch.tensor(image)
         image = torch.reshape(image, (3, image.size()[0], image.size()[1]))

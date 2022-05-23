@@ -92,7 +92,7 @@ class ResNet18(nn.Module):
         input = self.layer3(input)
         input = self.layer4(input)
         input = self.gap(input)
-        input = torch.reshape(input, (input.size()[0], input.size()[2], input.size()[1]))
+        input = input.view(input.shape[0], input.shape[2], input.shape[1])
         input = self.fc1(input)
         input = self.fc2(input)
         input = self.fc3(input)

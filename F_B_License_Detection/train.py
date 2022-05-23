@@ -9,13 +9,15 @@ import torch
 
 
 def save_model():
-    path = ".\\model.pth"
+
+    # TODO: Change this for LISA
+    path = "./model.pth"
     torch.save(model.state_dict(), path)
 
 
 def train(criterion, optimizer, train_loader, valid_loader, model):
 
-    epochs = 50
+    epochs = 100
     best_valid_accuracy = 0.0
 
     for e in range(epochs):
@@ -140,11 +142,13 @@ def test(test_loader):
 
 if __name__ == '__main__':
 
+
+    # TODO: img_dir is different for my PC
     dataset = CarImageDataset(
         csv_file='train_data.csv',
-        img_dir='.\\carsforvisibilitypred',
+        img_dir='./carsforvisibilitypred',
         transform=transforms.Compose([
-            transforms.Resize((256, 256)),
+            transforms.Resize((224, 224)),
         ])
     )
 

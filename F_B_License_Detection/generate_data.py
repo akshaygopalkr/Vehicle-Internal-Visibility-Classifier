@@ -1,8 +1,9 @@
-import cv2
+import ==cv2
 import csv
 import os
 import pandas as pd
 import random
+import pdb
 
 
 def update_file(file_name, new_train_data):
@@ -25,6 +26,7 @@ def add_data(img_folder, train_data):
             image_idx += 1
             continue
 
+        pdb.set_trace()
         path = img_folder + image_list[image_idx]
         img = cv2.imread(path)
         # img = cv2.resize(img, (500, 500))
@@ -34,7 +36,7 @@ def add_data(img_folder, train_data):
         # In case user gives invalid input
         while user_in != '1' and user_in != '0' and user_in != 'q' and user_in != 'n':
             cv2.imshow('Image', img)
-            user_in = chr(cv2.waitKey(0))
+            user_in = chr(cv2.waitKey(1))
 
         if user_in == 'q':
             break
