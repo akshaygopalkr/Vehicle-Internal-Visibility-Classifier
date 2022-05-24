@@ -1,4 +1,4 @@
-import ==cv2
+import cv2
 import csv
 import os
 import pandas as pd
@@ -26,7 +26,7 @@ def add_data(img_folder, train_data):
             image_idx += 1
             continue
 
-        pdb.set_trace()
+        # pdb.set_trace()
         path = img_folder + image_list[image_idx]
         img = cv2.imread(path)
         # img = cv2.resize(img, (500, 500))
@@ -78,5 +78,5 @@ if __name__ == '__main__':
 
     # TODO: These will be different on LISA computers
     train_data = load_data('train_data.csv')
-    new_data = add_data('./carsforvisibilitypred/', train_data)
+    new_data = add_data('.\\carsforvisibilitypred\\', train_data)
     update_file('train_data.csv', new_data)

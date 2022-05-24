@@ -4,20 +4,19 @@ from torch.utils.data import Dataset, DataLoader, random_split
 from torchvision import transforms, utils
 from resnet import ResBlock, ResNet18
 from car_dataset import CarImageDataset
-import pdb
 import torch
 
 
 def save_model():
 
     # TODO: Change this for LISA
-    path = "./model.pth"
+    path = ".\\model.pth"
     torch.save(model.state_dict(), path)
 
 
 def train(criterion, optimizer, train_loader, valid_loader, model):
 
-    epochs = 100
+    epochs = 175
     best_valid_accuracy = 0.0
 
     for e in range(epochs):
@@ -103,6 +102,8 @@ def train(criterion, optimizer, train_loader, valid_loader, model):
         print('Validation Accuracy = {}'.format(valid_accuracy))
         print('\n')
 
+    print('Maximum validation accuracy = {}'.format(best_valid_accuracy))
+
 
 # Function to test the model
 def test(test_loader):
@@ -146,7 +147,7 @@ if __name__ == '__main__':
     # TODO: img_dir is different for my PC
     dataset = CarImageDataset(
         csv_file='train_data.csv',
-        img_dir='./carsforvisibilitypred',
+        img_dir='.\\carsforvisibilitypred',
         transform=transforms.Compose([
             transforms.Resize((224, 224)),
         ])
@@ -159,9 +160,9 @@ if __name__ == '__main__':
     train_set, valid_set, test_set = random_split(dataset, [train_size, valid_size, test_size])
 
     # 3 Separate Data Loaders for train, validation, and test
-    train_loader = DataLoader(train_set, batch_size=2, shuffle=True, drop_last=True)
-    valid_loader = DataLoader(valid_set, batch_size=2, shuffle=True, drop_last=True)
-    test_loader = DataLoader(test_set, batch_size=1, shuffle=True)
+    train_loader = DataLoader(train_set, batch_size=32, shuffle=True, drop_last=True)
+    valid_loader = DataLoader(valid_set, batch_size=32, shuffle=True, drop_last=True)
+    test_loader = DataLoader(test_set, batch_size=32, shuffle=True)
 
     model = ResNet18(in_channels=3, resblock=ResBlock, outputs=100)
 
@@ -169,7 +170,7 @@ if __name__ == '__main__':
         model = model.cuda()
 
     criterion = nn.BCELoss()
-    optimizer = optim.AdamW(model.parameters(), lr=0.0005)
+    optimizer = optim.AdamW(model.parameters(), lr=0.001)
 
     # Send to train method
     train(criterion=criterion, optimizer=optimizer, train_loader=train_loader, valid_loader=valid_loader, model=model)
