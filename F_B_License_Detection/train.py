@@ -10,7 +10,7 @@ import torch
 def save_model():
 
     # TODO: Change this for LISA
-    path = ".\\model.pth"
+    path = "./model.pth"
     torch.save(model.state_dict(), path)
 
 
@@ -147,7 +147,7 @@ if __name__ == '__main__':
     # TODO: img_dir is different for my PC
     dataset = CarImageDataset(
         csv_file='train_data.csv',
-        img_dir='.\\carsforvisibilitypred',
+        img_dir='./carsforvisibilitypred',
         transform=transforms.Compose([
             transforms.Resize((224, 224)),
         ])

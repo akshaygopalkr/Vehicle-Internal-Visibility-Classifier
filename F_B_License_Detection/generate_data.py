@@ -41,7 +41,8 @@ def add_data(img_folder, train_data):
         if user_in == 'q':
             break
         elif user_in == 'n':
-            pass
+            image_idx += 1
+            continue
 
         # Use user input to make label
         label = 0 if user_in == '0' else 1
@@ -78,5 +79,5 @@ if __name__ == '__main__':
 
     # TODO: These will be different on LISA computers
     train_data = load_data('train_data.csv')
-    new_data = add_data('.\\carsforvisibilitypred\\', train_data)
+    new_data = add_data('./carsforvisibilitypred/', train_data)
     update_file('train_data.csv', new_data)
