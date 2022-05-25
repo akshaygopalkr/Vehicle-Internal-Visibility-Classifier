@@ -1,22 +1,20 @@
 from torch.cuda import is_available
 from torch import manual_seed, nn, optim
 from torch.utils.data import Dataset, DataLoader, random_split
-from torchvision import transforms, utils
+from torchvision import transforms, utils, models
 from resnet import ResBlock, ResNet18
 from car_dataset import CarImageDataset
 import torch
 
 
 def save_model():
-
     # TODO: Change this for LISA
     path = "./model.pth"
     torch.save(model.state_dict(), path)
 
 
 def train(criterion, optimizer, train_loader, valid_loader, model):
-
-    epochs = 150
+    epochs = 125
     best_valid_accuracy = 0.0
 
     for e in range(epochs):
@@ -65,6 +63,7 @@ def train(criterion, optimizer, train_loader, valid_loader, model):
         num_images = 0
 
         with torch.no_grad():
+
             # Set model to eval
             valid_loss = 0.0
             running_valid_accuracy = 0.0
@@ -109,7 +108,7 @@ def train(criterion, optimizer, train_loader, valid_loader, model):
 def test(test_loader):
 
     # Load the model that we saved at the end of the training loop
-    model = ResNet18(in_channels=3, resblock=ResBlock, outputs=100)
+    model = models.resnet50(pre_trained=True)
     path = "model.pth"
     model.load_state_dict(torch.load(path))
 
@@ -136,13 +135,11 @@ def test(test_loader):
             test_predictions = (target > 0.5).float()
             running_test_accuracy += (test_predictions == labels).float().sum()
 
-
         print('Accuracy of the model based on the test set of', num_images,
               'inputs is: %d %%' % (100 * running_test_accuracy / num_images))
 
 
 if __name__ == '__main__':
-
 
     # TODO: img_dir is different for my PC
     dataset = CarImageDataset(
@@ -166,7 +163,13 @@ if __name__ == '__main__':
     valid_loader = DataLoader(valid_set, batch_size=32, shuffle=True, drop_last=True)
     test_loader = DataLoader(test_set, batch_size=32, shuffle=True)
 
-    model = ResNet18(in_channels=3, resblock=ResBlock, outputs=100)
+    model = models.resnet50(pretrained=True)
+    model.fc = torch.nn.Sequential(
+        torch.nn.Linear(in_features=2048, out_features=1024),
+        torch.nn.Linear(in_features=1024, out_features=512),
+        torch.nn.Linear(in_features=512, out_features=1),
+        torch.nn.Sigmoid()
+    )
 
     if is_available():
         model = model.cuda()

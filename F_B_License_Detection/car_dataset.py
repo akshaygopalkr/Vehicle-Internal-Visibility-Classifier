@@ -1,6 +1,5 @@
 import pandas as pd
 from torch.utils.data import Dataset, DataLoader, random_split
-from torchvision.io import read_image
 import cv2
 import torch
 import pdb
