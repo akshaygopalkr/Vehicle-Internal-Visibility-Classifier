@@ -147,7 +147,7 @@ if __name__ == '__main__':
     # TODO: img_dir is different for my PC
     dataset = CarImageDataset(
         csv_file='train_data.csv',
-        img_dir='./carsforvisibilitypred',
+        img_dir='.\\carsforvisibilitypred',
         transform=transforms.Compose([
             transforms.ToPILImage(),
             transforms.Resize((128, 128)),

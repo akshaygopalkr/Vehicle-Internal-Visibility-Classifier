@@ -79,5 +79,5 @@ if __name__ == '__main__':
 
     # TODO: These will be different on LISA computers
     train_data = load_data('train_data.csv')
-    new_data = add_data('./carsforvisibilitypred/', train_data)
+    new_data = add_data('.\\carsforvisibilitypred\\', train_data)
     update_file('train_data.csv', new_data)

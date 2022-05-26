@@ -9,7 +9,7 @@ import torch
 
 def save_model():
     # TODO: Change this for LISA
-    path = "./model.pth"
+    path = ".\\model.pth"
     torch.save(model.state_dict(), path)
 
 
@@ -108,7 +108,13 @@ def train(criterion, optimizer, train_loader, valid_loader, model):
 def test(test_loader):
 
     # Load the model that we saved at the end of the training loop
-    model = models.resnet50(pre_trained=True)
+    model = models.resnet50(pretrained=True)
+    model.fc = torch.nn.Sequential(
+        torch.nn.Linear(in_features=2048, out_features=1024),
+        torch.nn.Linear(in_features=1024, out_features=512),
+        torch.nn.Linear(in_features=512, out_features=1),
+        torch.nn.Sigmoid()
+    )
     path = "model.pth"
     model.load_state_dict(torch.load(path))
 
@@ -144,7 +150,7 @@ if __name__ == '__main__':
     # TODO: img_dir is different for my PC
     dataset = CarImageDataset(
         csv_file='train_data.csv',
-        img_dir='./carsforvisibilitypred',
+        img_dir='.\\carsforvisibilitypred',
         transform=transforms.Compose([
             transforms.ToPILImage(),
             transforms.Resize((128, 128)),
