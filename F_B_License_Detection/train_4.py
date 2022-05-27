@@ -14,7 +14,7 @@ def save_model():
 
 
 def train(criterion, optimizer, train_loader, valid_loader, model):
-    epochs = 100
+    epochs = 50
     best_valid_accuracy = 0.0
 
     for e in range(epochs):
@@ -108,7 +108,7 @@ def train(criterion, optimizer, train_loader, valid_loader, model):
 def test(test_loader):
 
     # Load the model that we saved at the end of the training loop
-    model = models.resnet34(pretrained=True)
+    model = models.resnet18(pretrained=True)
     model.fc = torch.nn.Sequential(
         torch.nn.Linear(in_features=512, out_features=1),
         torch.nn.Sigmoid()
@@ -167,7 +167,7 @@ if __name__ == '__main__':
     valid_loader = DataLoader(valid_set, batch_size=32, shuffle=True, drop_last=True)
     test_loader = DataLoader(test_set, batch_size=32, shuffle=True)
 
-    model = models.resnet34(pretrained=True)
+    model = models.resnet18(pretrained=True)
     model.fc = torch.nn.Sequential(
         torch.nn.Linear(in_features=512, out_features=1),
         torch.nn.Sigmoid()

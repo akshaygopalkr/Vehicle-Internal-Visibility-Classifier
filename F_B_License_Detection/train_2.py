@@ -14,7 +14,7 @@ def save_model():
 
 
 def train(criterion, optimizer, train_loader, valid_loader, model):
-    epochs = 50
+    epochs = 75
     best_valid_accuracy = 0.0
 
     for e in range(epochs):
