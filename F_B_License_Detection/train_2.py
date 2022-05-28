@@ -163,7 +163,7 @@ if __name__ == '__main__':
     train_set, valid_set, test_set = random_split(dataset, [train_size, valid_size, test_size])
 
     # 3 Separate Data Loaders for train, validation, and test
-    train_loader = DataLoader(train_set, batch_size=32, shuffle=True, drop_last=True)
+    train_loader = DataLoader(train_set, batch_size=64, shuffle=True, drop_last=True)
     valid_loader = DataLoader(valid_set, batch_size=32, shuffle=True, drop_last=True)
     test_loader = DataLoader(test_set, batch_size=32, shuffle=True)
 
