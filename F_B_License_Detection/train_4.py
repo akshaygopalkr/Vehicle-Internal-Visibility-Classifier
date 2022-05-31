@@ -9,12 +9,12 @@ import torch
 
 def save_model():
     # TODO: Change this for LISA
-    path = ".\\model.pth"
+    path = ".\\model_4.pth"
     torch.save(model.state_dict(), path)
 
 
 def train(criterion, optimizer, train_loader, valid_loader, model):
-    epochs = 50
+    epochs = 75
     best_valid_accuracy = 0.0
 
     for e in range(epochs):
@@ -113,7 +113,7 @@ def test(test_loader):
         torch.nn.Linear(in_features=512, out_features=1),
         torch.nn.Sigmoid()
     )
-    path = "model.pth"
+    path = "model_4.pth"
     model.load_state_dict(torch.load(path))
 
     if is_available():

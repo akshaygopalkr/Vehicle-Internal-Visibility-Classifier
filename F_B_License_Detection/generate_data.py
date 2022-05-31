@@ -36,7 +36,7 @@ def add_data(img_folder, train_data):
         # In case user gives invalid input
         while user_in != '1' and user_in != '0' and user_in != 'q' and user_in != 'n':
             cv2.imshow('Image', img)
-            user_in = chr(cv2.waitKey(1))
+            user_in = chr(cv2.waitKey(0))
 
         if user_in == 'q':
             break

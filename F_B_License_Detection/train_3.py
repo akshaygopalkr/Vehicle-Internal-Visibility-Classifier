@@ -9,7 +9,7 @@ import torch
 
 def save_model():
     # TODO: Change this for LISA
-    path = ".\\model.pth"
+    path = ".\\model_3.pth"
     torch.save(model.state_dict(), path)
 
 
@@ -139,8 +139,8 @@ def test(test_loader):
             test_predictions = (target > 0.5).float()
             running_test_accuracy += (test_predictions == labels).float().sum()
 
-        print('Accuracy of the model based on the test set of', num_images,
-              'inputs is: %d %%' % (100 * running_test_accuracy / num_images))
+        print('Accuracy of the model based on the test set of ', num_images,
+              'inputs is: ', (100 * running_test_accuracy / num_images))
 
 
 if __name__ == '__main__':
@@ -172,7 +172,6 @@ if __name__ == '__main__':
         torch.nn.Linear(in_features=512, out_features=1),
         torch.nn.Sigmoid()
     )
-
     if is_available():
         model = model.cuda()
 
