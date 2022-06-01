@@ -10,7 +10,7 @@ import torch
 def save_model():
 
     # TODO: Change this for LISA
-    path = "./model.pth"
+    path = ".\\model.pth"
     torch.save(model.state_dict(), path)
 
 
