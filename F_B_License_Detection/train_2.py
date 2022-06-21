@@ -14,7 +14,7 @@ def save_model():
 
 
 def train(criterion, optimizer, train_loader, valid_loader, model):
-    epochs = 75
+    epochs = 100
     best_valid_accuracy = 0.0
 
     for e in range(epochs):
@@ -122,6 +122,10 @@ def test(test_loader):
     with torch.no_grad():
         num_images = 0
         running_test_accuracy = 0.0
+        running_tp = 0.0
+        running_tn = 0.0
+        running_fp = 0.0
+        running_fn = 0.0
         for batch, (image, labels) in enumerate(test_loader):
             if is_available():
                 image, labels = image.cuda(), labels.cuda()
@@ -137,10 +141,24 @@ def test(test_loader):
                 target = target.cuda()
 
             test_predictions = (target > 0.5).float()
-            running_test_accuracy += (test_predictions == labels).float().sum()
+            running_test_accuracy += (test_predictions == labels).float().sum().item()
+
+            pred_list = test_predictions.tolist()
+            labels_list = labels.tolist()
+            running_tp += sum(pred_list[i] == 1 and labels_list[i] == 1 for i in range(len(pred_list)))
+            running_tn += sum(pred_list[i] == 0 and labels_list[i] == 0 for i in range(len(pred_list)))
+            running_fp += sum(pred_list[i] == 1 and labels_list[i] == 0 for i in range(len(pred_list)))
+            running_fn += sum(pred_list[i] == 0 and labels_list[i] == 1 for i in range(len(pred_list)))
+
+
 
         print('Accuracy of the model based on the test set of', num_images,
-              'inputs is: %f', (100 * running_test_accuracy / num_images))
+              'inputs is: %', (100 * running_test_accuracy / num_images))
+        print('True Positive Rate: %', (100*running_tp/num_images))
+        print('True Negative Rate: %', (100 * running_tn / num_images))
+        print('False Positive Rate: %', (100 * running_fp / num_images))
+        print('False Negative Rate: %', (100 * running_fn / num_images))
+
 
 
 if __name__ == '__main__':
