@@ -71,9 +71,9 @@ if __name__ == '__main__':
     file_num = 'a'
 
     # TODO: Change file brackets for this part
-    file_dict = {1: '.\\rear_plate\\rear_plate_data.csv', 2: '.\\front_plate\\front_plate_data.csv',
-                 3: '.\\rear_L_light\\rear_L_light_data.csv', 4: '.\\rear_R_light\\rear_R_light_data.csv',
-                 5: '.\\front_L_light\\front_L_light_data.csv', 6: '.\\front_R_light\\front_R_light_data.csv'
+    file_dict = {1: './rear_plate/rear_plate_data.csv', 2: './front_plate/front_plate_data.csv',
+                 3: './rear_L_light/rear_L_light_data.csv', 4: './rear_R_light/rear_R_light_data.csv',
+                 5: './front_L_light/front_L_light_data.csv', 6: './front_R_light/front_R_light_data.csv'
                  }
     object_dict = {1: 'Rear license plate ', 2: 'Front license plate ',
                    3: 'Rear-Left Light ', 4: 'Rear-Right Plate ',
@@ -100,5 +100,5 @@ if __name__ == '__main__':
     train_data = load_data(file_path)
 
     # TODO: These will be different on LISA computers
-    new_data = add_data('.\\carsforvisibilitypred\\', train_data)
+    new_data = add_data('./carsforvisibilitypred/', train_data)
     update_file(file_path, new_data)

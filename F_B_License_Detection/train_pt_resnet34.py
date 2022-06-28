@@ -9,7 +9,7 @@ import torch
 def save_model(file_folder):
 
     # TODO: Change this for LISA
-    path = file_folder + "\\pt_resnet34.pth"
+    path = file_folder + "/pt_resnet34.pth"
     torch.save(model.state_dict(), path)
 
 
@@ -116,7 +116,7 @@ def test(test_loader, file_folder):
     )
 
     # TODO: Change brackets for this part
-    path = file_folder + "\\pt_resnet34.pth"
+    path = file_folder + "/pt_resnet34.pth"
     model.load_state_dict(torch.load(path))
 
     if is_available():
@@ -166,9 +166,9 @@ if __name__ == '__main__':
     file_num = 'a'
 
     # TODO: Change file brackets for this part
-    file_dict = {1: '.\\rear_plate\\rear_plate_data.csv', 2: '.\\front_plate\\front_plate_data.csv',
-                 3: '.\\rear_L_light\\rear_L_light_data.csv', 4: '.\\rear_R_light\\rear_R_light_data.csv',
-                 5: '.\\front_L_light\\front_L_light_data.csv', 6: '.\\front_R_light\\front_R_light_data.csv'
+    file_dict = {1: './rear_plate/rear_plate_data.csv', 2: './front_plate/front_plate_data.csv',
+                 3: './rear_L_light/rear_L_light_data.csv', 4: './rear_R_light/rear_R_light_data.csv',
+                 5: './front_L_light/front_L_light_data.csv', 6: './front_R_light/front_R_light_data.csv'
                  }
 
     while not file_num.isdigit() or (file_num.isdigit() and not 1 <= int(file_num) <= 6):
@@ -178,12 +178,12 @@ if __name__ == '__main__':
     file_path = file_dict[int(file_num)]
 
     # TODO: Change brackets for this part
-    file_folder = '.\\' + file_path.split('\\')[1]
+    file_folder = './' + file_path.split('/')[1]
 
     # TODO: img_dir is different for my PC
     dataset = CarImageDataset(
         csv_file=file_path,
-        img_dir='.\\carsforvisibilitypred',
+        img_dir='./carsforvisibilitypred',
         transform=transforms.Compose([
             transforms.ToPILImage(),
             transforms.Resize((128, 128)),
