@@ -17,7 +17,7 @@ class CarImageDataset(Dataset):
 
     def __getitem__(self, idx):
 
-        # TODO: Different for my PC
+        # TODO: Different for LISA Computers
         img_path = self.img_dir + '\\' + self.data_file.iloc[idx, 0]
         image = cv2.imread(img_path)
         image = torch.tensor(image)
