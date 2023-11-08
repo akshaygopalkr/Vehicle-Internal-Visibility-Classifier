@@ -1,5 +1,6 @@
 # Vehicle Internal Visibility Classifier
 * This github repository contains code inside the `F_B_License_Detection` folder to train a model to classify whether a specific vehicle internal (front left light, front right light, rear left light, rear right light, rear license plate, front license plate) is visible or not. All the installation requirements are in the provided folder.
+* To train our classifier, we used a NVIDIA GeForce GTX 1070, a batch size of 64, learning rate of 0.001, a training/validation/testing set split of 75%/15%/10% respectively, and trained for 125 epochs. This took about 1 hour for the training process to finish.
 
 ## Downloading Dataset
 * To train and label data for vehicle internal visibility classification, we use a dataset of detected cars from the ApolloCar3D Dataset [1]. To download this data use this link: https://drive.google.com/file/d/1oMPV9ov5tucrNUJyM_dah-2brTQF9WGc/view?usp=sharing. Once the data is downloaded, put it inside the `F_B_License_Detection` folder. 
