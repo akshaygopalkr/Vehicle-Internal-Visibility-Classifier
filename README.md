@@ -1,4 +1,4 @@
-# Vehicle Internal Classifier
+# Vehicle Internal Visibility Classifier
 * This github repository contains code inside the `F_B_License_Detection` folder to train a model to classify whether a specific vehicle internal (front left light, front right light, rear left light, rear right light, rear license plate, front license plate) is visible or not. All the installation requirements are in the provided folder.
 
 ## Downloading Dataset
