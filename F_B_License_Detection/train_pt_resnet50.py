@@ -2,14 +2,14 @@ from torch.cuda import is_available
 from torch import manual_seed, nn, optim
 from torch.utils.data import Dataset, DataLoader, random_split
 from torchvision import transforms, utils, models
-from F_B_License_Detection.car_dataset import CarImageDataset
+from car_dataset import CarImageDataset
 import torch
+import os
 
 
 def save_model(file_folder):
 
-    # TODO: Change this for LISA
-    path = file_folder + "/pt_resnet50.pth"
+    path = os.path.join(file_folder, 'pt_resnet50.pth')
     torch.save(model.state_dict(), path)
 
 
@@ -114,8 +114,7 @@ def test(test_loader, file_folder):
         torch.nn.Sigmoid()
     )
 
-    # TODO: Different path for LISA Computers
-    path = file_folder + "/pt_resnet50.pth"
+    path = os.path.join(file_folder, 'pt_resnet50.pth')
     model.load_state_dict(torch.load(path))
 
     if is_available():
@@ -167,10 +166,16 @@ if __name__ == '__main__':
 
     file_num = 'a'
 
-    # TODO: Change file brackets for this part
-    file_dict = {1: './rear_plate/rear_plate_data.csv', 2: './front_plate/front_plate_data.csv',
-                 3: './rear_L_light/rear_L_light_data.csv', 4: './rear_R_light/rear_R_light_data.csv',
-                 5: './front_L_light/front_L_light_data.csv', 6: './front_R_light/front_R_light_data.csv'
+    rear_plate_path = os.path.join('rear_plate', 'rear_plate_data.csv')
+    front_plate_path = os.path.join('front_plate', 'front_plate_data.csv')
+    rear_l_path = os.path.join('rear_L_light', 'rear_L_light_data.csv')
+    rear_R_path = os.path.join('rear_R_light', 'rear_R_light_data.csv')
+    front_L_light = os.path.join('front_L_light', 'front_L_light_data.csv')
+    front_R_light = os.path.join('front_R_light', 'front_R_light_data.csv')
+
+    file_dict = {1: rear_plate_path, 2: front_plate_path,
+                 3: rear_l_path, 4: rear_R_path,
+                 5: front_L_light, 6: front_R_light
                  }
 
     while not file_num.isdigit() or (file_num.isdigit() and not 1 <= int(file_num) <= 6):
@@ -178,14 +183,12 @@ if __name__ == '__main__':
                          '\n 4. Right-Rear Light 5. Left-Front Light 6. Right-Front Light\n')
 
     file_path = file_dict[int(file_num)]
+    file_folder = os.path.split(file_path)[0]
 
-    # TODO: Change for LISA
-    file_folder = './' + file_path.split('/')[1]
 
-    # TODO: img_dir is different for my PC
     dataset = CarImageDataset(
         csv_file=file_path,
-        img_dir='./carsforvisibilitypred',
+        img_dir='carsforvisibilitypred',
         transform=transforms.Compose([
             transforms.ToPILImage(),
             transforms.Resize((128, 128)),

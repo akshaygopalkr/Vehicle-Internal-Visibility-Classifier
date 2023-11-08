@@ -2,14 +2,16 @@ from torch.cuda import is_available
 from torch import manual_seed, nn, optim
 from torch.utils.data import Dataset, DataLoader, random_split
 from torchvision import transforms, utils, models
-from F_B_License_Detection.car_dataset import CarImageDataset
+from car_dataset import CarImageDataset
 import torch
+from torch.optim.swa_utils import AveragedModel, SWALR
+from tqdm import tqdm as progress_bar
+import os
 
 
 def save_model(file_folder):
 
-    # TODO: Change this for LISA
-    path = file_folder + "/pt_resnet34.pth"
+    path = os.path.join(file_folder, 'pt_resnet34.pth')
     torch.save(model.state_dict(), path)
 
 
@@ -17,6 +19,9 @@ def train(criterion, optimizer, train_loader, valid_loader, model, file_folder):
 
     epochs = 125
     best_valid_accuracy = 0.0
+
+    swa_model = AveragedModel(model)
+    swa_scheduler = SWALR(optimizer, swa_lr=0.001)
 
     for e in range(epochs):
 
@@ -26,7 +31,7 @@ def train(criterion, optimizer, train_loader, valid_loader, model, file_folder):
         running_train_accuracy = 0.0
         num_train_images = 0
 
-        for batch, (image, labels) in enumerate(train_loader):
+        for step, (image, labels) in progress_bar(enumerate(train_loader), total=len(train_loader)):
 
             # Transfer Data to GPU if available
             if is_available():
@@ -36,9 +41,6 @@ def train(criterion, optimizer, train_loader, valid_loader, model, file_folder):
             labels = labels.float()
             num_train_images += image.size()[0]
 
-            # Clear gradients
-            optimizer.zero_grad()
-
             # Run target through model and format the output
             target = model(image)
             target = target.view(image.size()[0])
@@ -46,14 +48,13 @@ def train(criterion, optimizer, train_loader, valid_loader, model, file_folder):
             if is_available():
                 target = target.cuda()
 
-            # Find the loss for this batch
             loss = criterion(target, labels)
-
-            # backpropagation
             loss.backward()
-
-            # adjust parameters
             optimizer.step()
+
+            swa_model.update_parameters(model)
+            swa_scheduler.step()
+            optimizer.zero_grad()
 
             # Calculate the # of correct predictions and training loss
             train_predictions = (target > 0.5).float()
@@ -95,7 +96,7 @@ def train(criterion, optimizer, train_loader, valid_loader, model, file_folder):
         if valid_accuracy > best_valid_accuracy:
             save_model(file_folder)
             best_valid_accuracy = valid_accuracy
-
+        print()
         print(
             f'Epoch {e + 1} \t\t Training Loss: {train_loss / num_train_images} \t\t Validation Loss: {valid_loss / num_images}')
         print('Training Accuracy = {}'.format(train_accuracy))
@@ -115,8 +116,7 @@ def test(test_loader, file_folder):
         torch.nn.Sigmoid()
     )
 
-    # TODO: Change brackets for this part
-    path = file_folder + "/pt_resnet34.pth"
+    path = os.path.join(file_folder, 'pt_resnet34.pth')
     model.load_state_dict(torch.load(path))
 
     if is_available():
@@ -129,6 +129,8 @@ def test(test_loader, file_folder):
         running_tn = 0.0
         running_fp = 0.0
         running_fn = 0.0
+        running_prediction = 0.0
+        predictions = []
         for batch, (image, labels) in enumerate(test_loader):
             if is_available():
                 image, labels = image.cuda(), labels.cuda()
@@ -145,6 +147,8 @@ def test(test_loader, file_folder):
 
             test_predictions = (target > 0.5).float()
             running_test_accuracy += (test_predictions == labels).float().sum().item()
+            running_prediction += sum(test_predictions.tolist())
+            predictions.extend(test_predictions.tolist())
 
             pred_list = test_predictions.tolist()
             labels_list = labels.tolist()
@@ -153,22 +157,31 @@ def test(test_loader, file_folder):
             running_fp += sum(pred_list[i] == 1 and labels_list[i] == 0 for i in range(len(pred_list)))
             running_fn += sum(pred_list[i] == 0 and labels_list[i] == 1 for i in range(len(pred_list)))
 
+        print(pred_list)
         print('Accuracy of the model based on the test set of', num_images,
               'inputs is: %', (100 * running_test_accuracy / num_images))
         print('True Positive Rate: %', (100 * running_tp / num_images))
         print('True Negative Rate: %', (100 * running_tn / num_images))
         print('False Positive Rate: %', (100 * running_fp / num_images))
         print('False Negative Rate: %', (100 * running_fn / num_images))
+        print('Average prediction: %', (100*running_prediction / num_images))
+
 
 
 if __name__ == '__main__':
 
     file_num = 'a'
 
-    # TODO: Change file brackets for this part
-    file_dict = {1: './rear_plate/rear_plate_data.csv', 2: './front_plate/front_plate_data.csv',
-                 3: './rear_L_light/rear_L_light_data.csv', 4: './rear_R_light/rear_R_light_data.csv',
-                 5: './front_L_light/front_L_light_data.csv', 6: './front_R_light/front_R_light_data.csv'
+    rear_plate_path = os.path.join('rear_plate', 'rear_plate_data.csv')
+    front_plate_path = os.path.join('front_plate', 'front_plate_data.csv')
+    rear_l_path = os.path.join('rear_L_light', 'rear_L_light_data.csv')
+    rear_R_path = os.path.join('rear_R_light', 'rear_R_light_data.csv')
+    front_L_light = os.path.join('front_L_light', 'front_L_light_data.csv')
+    front_R_light = os.path.join('front_R_light', 'front_R_light_data.csv')
+
+    file_dict = {1: rear_plate_path, 2: front_plate_path,
+                 3: rear_l_path, 4: rear_R_path,
+                 5: front_L_light, 6: front_R_light
                  }
 
     while not file_num.isdigit() or (file_num.isdigit() and not 1 <= int(file_num) <= 6):
@@ -176,14 +189,11 @@ if __name__ == '__main__':
                          '\n 4. Right-Rear Light 5. Left-Front Light 6. Right-Front Light\n')
 
     file_path = file_dict[int(file_num)]
+    file_folder = os.path.split(file_path)[0]
 
-    # TODO: Change brackets for this part
-    file_folder = './' + file_path.split('/')[1]
-
-    # TODO: img_dir is different for my PC
     dataset = CarImageDataset(
         csv_file=file_path,
-        img_dir='./carsforvisibilitypred',
+        img_dir='carsforvisibilitypred',
         transform=transforms.Compose([
             transforms.ToPILImage(),
             transforms.Resize((128, 128)),
@@ -198,9 +208,9 @@ if __name__ == '__main__':
     train_set, valid_set, test_set = random_split(dataset, [train_size, valid_size, test_size])
 
     # 3 Separate Data Loaders for train, validation, and test
-    train_loader = DataLoader(train_set, batch_size=64, shuffle=True, drop_last=True)
-    valid_loader = DataLoader(valid_set, batch_size=32, shuffle=True, drop_last=True)
-    test_loader = DataLoader(test_set, batch_size=32, shuffle=True)
+    train_loader = DataLoader(train_set, batch_size=256, shuffle=True)
+    valid_loader = DataLoader(valid_set, batch_size=256, shuffle=True)
+    test_loader = DataLoader(test_set, batch_size=256, shuffle=True)
 
     model = models.resnet34(pretrained=True)
     model.fc = torch.nn.Sequential(
